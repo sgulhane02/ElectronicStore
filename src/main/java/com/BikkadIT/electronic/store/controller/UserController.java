@@ -4,17 +4,25 @@ import com.BikkadIT.electronic.store.constants.AppConstant;
 import com.BikkadIT.electronic.store.constants.UrlConstant;
 import com.BikkadIT.electronic.store.dtos.UserDto;
 import com.BikkadIT.electronic.store.payload.ApiResponseMessage;
+import com.BikkadIT.electronic.store.payload.ImageResponse;
 import com.BikkadIT.electronic.store.payload.PageableResponse;
+import com.BikkadIT.electronic.store.services.ImageService;
 import com.BikkadIT.electronic.store.services.UserService;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @Slf4j
@@ -31,6 +40,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     @Autowired
 	private UserService userService;
+    @Autowired
+    private ImageService imageService;
+
+    @Value("${user.profile.image.path}")
+    private String imageUploadPath;
 
     /**
      * @auther Shrikant
@@ -127,10 +141,26 @@ public class UserController {
     public ResponseEntity<List<UserDto>> searchUser(@PathVariable String keywords){
     	return new ResponseEntity<>(userService.searchUser(keywords), HttpStatus.OK); 
     }
-    
-    
-    
-    
-    
-    
+
+    @PostMapping("/image/upload/{userId}")
+    public ResponseEntity<ImageResponse> uploadUserImage(@RequestParam("userImage")MultipartFile image,@PathVariable String userId) throws IOException {
+
+
+        String imageName = imageService.uploadFile(image, imageUploadPath);
+        UserDto user = userService.getUserById(userId);
+        user.setImage(imageName);
+        userService.updateUser(user,userId);
+
+        ImageResponse imageResponse = ImageResponse.builder().imageName(imageName).success(true).status(HttpStatus.CREATED).build();
+        return new ResponseEntity<>(imageResponse,HttpStatus.CREATED);
+    }
+
+    @GetMapping("/image/{imageName}")
+    public void downloadImage(@PathVariable String imageName , HttpServletResponse response) throws IOException {
+        InputStream resource = imageService.getResource(imageUploadPath, imageName);
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        StreamUtils.copy(resource,response.getOutputStream());
+
+    }
+
 }
