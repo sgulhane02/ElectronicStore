@@ -56,7 +56,9 @@ public class UserController {
     @PostMapping("/")
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto)
     {
+        log.info("Entering request for adding user");
     	UserDto userDto1 = userService.saveUser(userDto);
+        log.info("Completed request of user data uploaded");
 		return new ResponseEntity<>(userDto1, HttpStatus.CREATED );
     }
     //update
@@ -72,7 +74,9 @@ public class UserController {
     		@PathVariable String userId,
     		@Valid @RequestBody UserDto userDto)
     {
+        log.info("Entering request for update user with userId : {}",userId);
     	UserDto UserDto1 = userService.updateUser(userDto, userId);
+        log.info("Complete request for update user with userId : {} ", userId);
     	return new ResponseEntity<>(UserDto1, HttpStatus.OK);
     }
     //delete
@@ -84,9 +88,10 @@ public class UserController {
      */
     @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponseMessage> deleteUser(@PathVariable String userId) {
+        log.info("Entering request for delete user");
         this.userService.deleteUser(userId);
-
         ApiResponseMessage apiResponseMessage = ApiResponseMessage.builder().message(AppConstant.DELETED + userId).status(false).httpStatus(HttpStatus.OK).build();
+        log.info("Complete request for delete user with id");
         return new ResponseEntity<>(apiResponseMessage, HttpStatus.OK);
     }
 
@@ -142,23 +147,27 @@ public class UserController {
     	return new ResponseEntity<>(userService.searchUser(keywords), HttpStatus.OK); 
     }
 
-    @PostMapping("/image/upload/{userId}")
-    public ResponseEntity<ImageResponse> uploadUserImage(@RequestParam("userImage")MultipartFile image,@PathVariable String userId) throws IOException {
+    @PostMapping("/image/{userId}")
+    public ResponseEntity<ImageResponse> uploadUserImage(@RequestParam MultipartFile image,@PathVariable String userId) throws IOException {
 
 
         String imageName = imageService.uploadFile(image, imageUploadPath);
+        log.info("Entering request for posting image");
         UserDto user = userService.getUserById(userId);
         user.setImage(imageName);
         userService.updateUser(user,userId);
-
+        log.info("Completed request for posting image in database");
         ImageResponse imageResponse = ImageResponse.builder().imageName(imageName).success(true).status(HttpStatus.CREATED).build();
         return new ResponseEntity<>(imageResponse,HttpStatus.CREATED);
     }
 
-    @GetMapping("/image/{imageName}")
-    public void downloadImage(@PathVariable String imageName , HttpServletResponse response) throws IOException {
-        InputStream resource = imageService.getResource(imageUploadPath, imageName);
+    @GetMapping("/image/{userId}")
+    public void downloadImage(@PathVariable String userId , HttpServletResponse response) throws IOException {
+        UserDto user = userService.getUserById(userId);
+        log.info("Entering request for getting uploaded image");
+        InputStream resource = imageService.getResource(imageUploadPath, user.getImage());
         response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        log.info("Completed request for getting uploaded image with userId : {}",userId);
         StreamUtils.copy(resource,response.getOutputStream());
 
     }
