@@ -115,9 +115,9 @@ public class UserController {
     		@RequestParam(value = "sortDir", defaultValue = UrlConstant.SORT_DIRECTION , required = false) String sortDir
     		){
 
-       // logger.info("Entering request for get all user records");
+       log.info("Entering request for get all user records");
         PageableResponse<UserDto> allUsers = userService.getAllUsers(pageNumber, pageSize, sortBy, sortDir);
-        //logger.info("Completed request for get all user records");
+        log.info("Completed request for get all user records");
         return new ResponseEntity<>(allUsers,HttpStatus.OK);
 
     }
