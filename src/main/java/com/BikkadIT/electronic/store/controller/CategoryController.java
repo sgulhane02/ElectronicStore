@@ -4,15 +4,24 @@ import com.BikkadIT.electronic.store.constants.AppConstant;
 import com.BikkadIT.electronic.store.constants.UrlConstant;
 import com.BikkadIT.electronic.store.dtos.CategoryDto;
 import com.BikkadIT.electronic.store.payload.ApiResponseMessage;
+import com.BikkadIT.electronic.store.payload.ImageResponse;
 import com.BikkadIT.electronic.store.payload.PageableResponse;
 import com.BikkadIT.electronic.store.services.CategoryService;
+import com.BikkadIT.electronic.store.services.ImageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
+import java.io.InputStream;
 
 @RestController
 @RequestMapping(UrlConstant.BASE_URL)
@@ -20,6 +29,10 @@ import javax.validation.Valid;
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private ImageService imageService;
+
 
     @PostMapping("/category")
     public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryDto categoryDto){
@@ -65,4 +78,7 @@ public class CategoryController {
         log.info("Completed request for delete the category with category id :{}",categoryId);
         return new ResponseEntity<>(new ApiResponseMessage(),HttpStatus.OK);
     }
+
+
+
 }
