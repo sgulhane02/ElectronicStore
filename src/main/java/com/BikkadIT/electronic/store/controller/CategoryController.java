@@ -1,6 +1,6 @@
 package com.BikkadIT.electronic.store.controller;
 
-import com.BikkadIT.electronic.store.constants.AppConstant;
+
 import com.BikkadIT.electronic.store.constants.UrlConstant;
 import com.BikkadIT.electronic.store.dtos.CategoryDto;
 import com.BikkadIT.electronic.store.payload.ApiResponseMessage;
@@ -23,6 +23,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
 
+
 @RestController
 @RequestMapping(UrlConstant.BASE_URL)
 @Slf4j
@@ -33,7 +34,14 @@ public class CategoryController {
     @Autowired
     private ImageService imageService;
 
+    @Value("${category.profile.image.path}")
+    private String path;
 
+    /**
+     *
+     * @param categoryDto
+     * @return
+     */
     @PostMapping("/category")
     public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryDto categoryDto){
         log.info("Entering request for create category data");
@@ -42,6 +50,12 @@ public class CategoryController {
         return new ResponseEntity<>(category, HttpStatus.CREATED);
     }
 
+    /**
+     *
+     * @param categoryDto
+     * @param categoryId
+     * @return
+     */
     @PutMapping("/category/{categoryId}")
     public ResponseEntity<CategoryDto> updateCategory(@Valid @RequestBody CategoryDto categoryDto, @PathVariable String categoryId)
     {
@@ -51,6 +65,11 @@ public class CategoryController {
         return new ResponseEntity<>(updateCategory,HttpStatus.OK);
     }
 
+    /**
+     *
+     * @param categoryId
+     * @return
+     */
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<CategoryDto> getCategoryById(@PathVariable String categoryId){
         log.info("Entering request for get category by id :{}",categoryId);
@@ -59,6 +78,15 @@ public class CategoryController {
         return new ResponseEntity<>(categoryById,HttpStatus.OK);
 
     }
+
+    /**
+     *
+     * @param pageNumber
+     * @param pageSize
+     * @param sortBy
+     * @param sortDir
+     * @return
+     */
     @GetMapping("/categories")
     public ResponseEntity<PageableResponse<CategoryDto>> getAllCategories(
             @RequestParam(value = "pageNumber",defaultValue = UrlConstant.PAGE_NUMBER,required = false) Integer pageNumber,
@@ -71,12 +99,54 @@ public class CategoryController {
         log.info("Completed Request for get All categories By pagination And Sorting");
         return new ResponseEntity<>(allCategories,HttpStatus.OK);
     }
+
+    /**
+     *
+     * @param categoryId
+     * @return
+     */
     @DeleteMapping("/category/{categoryId}")
     public ResponseEntity<ApiResponseMessage> deleteCategory(@PathVariable String categoryId){
         log.info("Entering Request for delete the category with category id:{}",categoryId);
         this.categoryService.deleteCategory(categoryId);
         log.info("Completed request for delete the category with category id :{}",categoryId);
         return new ResponseEntity<>(new ApiResponseMessage(),HttpStatus.OK);
+    }
+
+    /**
+     *
+     * @param image
+     * @param categoryId
+     * @return
+     * @throws IOException
+     */
+    @PostMapping("/category/image/{categoryId}")
+    public ResponseEntity<ImageResponse> uploadCoverImage(@RequestParam MultipartFile image, @PathVariable String categoryId) throws IOException {
+
+        log.info("Entering request for upload cover image with category id :{}", categoryId);
+        String uploadFile = imageService.uploadFile(image, path);
+        CategoryDto cat = categoryService.getCategoryById(categoryId);
+        cat.setCoverImage(uploadFile);
+        categoryService.updateCategory(cat, categoryId);
+        ImageResponse imageUploaded = ImageResponse.builder().imageName(uploadFile).message("Image Uploaded").success(true).status(HttpStatus.CREATED).build();
+        log.info("Completed request for upload cover image with category id :{}", categoryId);
+        return new ResponseEntity<>(imageUploaded, HttpStatus.CREATED);
+    }
+
+    /**
+     *
+     * @param categoryId
+     * @param response
+     * @throws IOException
+     */
+    @GetMapping("/category/image/{categoryId}")
+    public void serveCoverImage(@PathVariable String categoryId, HttpServletResponse response) throws IOException {
+        log.info("Entering Request for get cover image with category id :{}", categoryId);
+        CategoryDto category = categoryService.getCategoryById(categoryId);
+        InputStream resource = imageService.getResource(path, category.getCoverImage());
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
+        StreamUtils.copy(resource, response.getOutputStream());
+        log.info("Completed Request for get cover image with category id :{}", categoryId);
     }
 
 

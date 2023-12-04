@@ -142,11 +142,24 @@ public class UserController {
     }
     
   //Search user
+
+    /**
+     *
+     * @param keywords
+     * @return
+     */
     @GetMapping("/search/{keywords}")
     public ResponseEntity<List<UserDto>> searchUser(@PathVariable String keywords){
     	return new ResponseEntity<>(userService.searchUser(keywords), HttpStatus.OK); 
     }
 
+    /**
+     *
+     * @param image
+     * @param userId
+     * @return
+     * @throws IOException
+     */
     @PostMapping("/image/{userId}")
     public ResponseEntity<ImageResponse> uploadUserImage(@RequestParam MultipartFile image,@PathVariable String userId) throws IOException {
 
@@ -161,6 +174,12 @@ public class UserController {
         return new ResponseEntity<>(imageResponse,HttpStatus.CREATED);
     }
 
+    /**
+     *
+     * @param userId
+     * @param response
+     * @throws IOException
+     */
     @GetMapping("/image/{userId}")
     public void downloadImage(@PathVariable String userId , HttpServletResponse response) throws IOException {
         UserDto user = userService.getUserById(userId);
