@@ -111,7 +111,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public PageableResponse<ProductDto> searchByTitle(String subTitle, Integer pageNum, Integer pageSize, String sortBy, String sortDir) {
-        return null;
+        Sort sort = sortDir.equalsIgnoreCase("dsc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        PageRequest pageable = PageRequest.of(pageNum, pageSize, sort);
+        log.info("Initiating dao call for search the product by title with pagination");
+        Page<Product> page = this.productRepository.findByTitleContaining(subTitle,pageable);
+        PageableResponse<ProductDto> response = PageableHelper.getPageableResponse(page, ProductDto.class);
+        log.info("Completed dao call for search the product by title with pagination");
+        return response;
     }
 
 
