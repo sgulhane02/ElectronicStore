@@ -4,7 +4,6 @@ import com.BikkadIT.electronic.store.constants.AppConstant;
 import com.BikkadIT.electronic.store.dtos.ProductDto;
 import com.BikkadIT.electronic.store.entities.Product;
 import com.BikkadIT.electronic.store.exceptions.ResourceNotFound;
-import com.BikkadIT.electronic.store.helper.PageableHelper;
 import com.BikkadIT.electronic.store.payload.PageableResponse;
 import com.BikkadIT.electronic.store.repositories.ProductRepository;
 import com.BikkadIT.electronic.store.services.ProductService;
@@ -12,14 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.Date;
-import java.util.List;
+
 import java.util.UUID;
 @Service
 @Slf4j
@@ -81,7 +77,11 @@ public class ProductServiceImpl implements ProductService {
 
     }
 
-
+    @Override
+    public ProductDto getProductById(String productId) {
+        Product product = this.productRepository.findById(productId).orElseThrow(() -> new ResourceNotFound(AppConstant.NOT_FOUND + "id" + productId));
+        return this.modelMapper.map(product,ProductDto.class);
+    }
 
     @Override
     public PageableResponse<ProductDto> getAllProducts(Integer pageNum, Integer pageSize, String sortBy, String sortDir) {
