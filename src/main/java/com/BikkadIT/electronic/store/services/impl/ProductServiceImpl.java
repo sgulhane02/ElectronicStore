@@ -70,52 +70,27 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(String productId) {
-        Product product = this.productRepository.findById(productId).orElseThrow(() -> new ResourceNotFound(AppConstant.NOT_FOUND + "id" + productId));
-        String imageName = product.getImageName();
-        String fullPath=path+imageName;
-        File file=new File(fullPath);
-        if(file.exists()){
-            file.delete();
-        }
-        this.productRepository.delete(product);
 
     }
 
     @Override
     public ProductDto getProductById(String productId) {
-        Product product = this.productRepository.findById(productId).orElseThrow(() -> new ResourceNotFound(AppConstant.NOT_FOUND + "id" + productId));
-        return this.modelMapper.map(product,ProductDto.class);
+        return null;
     }
 
     @Override
     public PageableResponse<ProductDto> getAllProducts(Integer pageNum, Integer pageSize, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("dsc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        PageRequest pageable = PageRequest.of(pageNum, pageSize, sort);
-        Page<Product> page = this.productRepository.findAll(pageable);
-        PageableResponse<ProductDto> response = PageableHelper.getPageableResponse(page, ProductDto.class);
-        return response;
+        return null;
     }
 
     @Override
     public PageableResponse<ProductDto> getAllLive(Integer pageNum, Integer pageSize, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("dsc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        PageRequest pageable = PageRequest.of(pageNum, pageSize, sort);
-        log.info("Initiating dao call for get all live products with pagination");
-        Page<Product> page = this.productRepository.findByLiveTrue(pageable);
-        PageableResponse<ProductDto> response = PageableHelper.getPageableResponse(page, ProductDto.class);
-        log.info("Completed dao call for get all live products with pagination");
-        return response;
+        return null;
     }
 
     @Override
     public PageableResponse<ProductDto> searchByTitle(String subTitle, Integer pageNum, Integer pageSize, String sortBy, String sortDir) {
-        Sort sort = sortDir.equalsIgnoreCase("dsc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        PageRequest pageable = PageRequest.of(pageNum, pageSize, sort);
-        log.info("Initiating dao call for search the product by title with pagination");
-        Page<Product> page = this.productRepository.findByTitleContaining(subTitle,pageable);
-        PageableResponse<ProductDto> response = PageableHelper.getPageableResponse(page, ProductDto.class);
-        log.info("Completed dao call for search the product by title with pagination");
-        return response;
+        return null;
     }
 
 
