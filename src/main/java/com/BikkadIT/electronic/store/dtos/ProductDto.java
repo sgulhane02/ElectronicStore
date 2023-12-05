@@ -1,5 +1,6 @@
 package com.BikkadIT.electronic.store.dtos;
 
+import com.BikkadIT.electronic.store.validate.ImageNameValid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -41,4 +42,7 @@ public class ProductDto {
 
     @NotEmpty
     private Boolean stock;
+
+    @ImageNameValid
+    private String imageName;
 }

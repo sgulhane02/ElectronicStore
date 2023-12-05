@@ -8,7 +8,7 @@ import java.util.List;
 public interface ProductService{
     ProductDto createProduct(ProductDto productDto);
 
-    ProductDto updateProduct(ProductDto productDto, String productId);
+    ProductDto updateProduct(ProductDto productDto ,String productId);
 
     void deleteProduct(String productId);
 
@@ -16,9 +16,7 @@ public interface ProductService{
 
     PageableResponse<ProductDto> getAllProducts(Integer pageNum, Integer pageSize, String sortBy, String sortDir);
 
-    List<ProductDto> getAllLive();
+    PageableResponse<ProductDto> getAllLive(Integer pageNum, Integer pageSize, String sortBy, String sortDir);
 
-    List<ProductDto> searchByTitle(String subTitle);
-
-
+    PageableResponse<ProductDto> searchByTitle(String subTitle,Integer pageNum, Integer pageSize, String sortBy, String sortDir);
 }

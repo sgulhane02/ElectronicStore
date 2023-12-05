@@ -8,18 +8,21 @@ import com.BikkadIT.electronic.store.helper.PageableHelper;
 import com.BikkadIT.electronic.store.payload.PageableResponse;
 import com.BikkadIT.electronic.store.repositories.ProductRepository;
 import com.BikkadIT.electronic.store.services.ProductService;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
-
+@Service
+@Slf4j
 public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
@@ -97,13 +100,23 @@ public class ProductServiceImpl implements ProductService {
     public PageableResponse<ProductDto> getAllLive(Integer pageNum, Integer pageSize, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase("dsc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         PageRequest pageable = PageRequest.of(pageNum, pageSize, sort);
+        log.info("Initiating dao call for get all live products with pagination");
         Page<Product> page = this.productRepository.findByLiveTrue(pageable);
         PageableResponse<ProductDto> response = PageableHelper.getPageableResponse(page, ProductDto.class);
+        log.info("Completed dao call for get all live products with pagination");
         return response;
     }
 
     @Override
-    public List<ProductDto> searchByTitle(String subTitle) {
-        return null;
+    public PageableResponse<ProductDto> searchByTitle(String subTitle, Integer pageNum, Integer pageSize, String sortBy, String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("dsc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        PageRequest pageable = PageRequest.of(pageNum, pageSize, sort);
+        log.info("Initiating dao call for search the product by title with pagination");
+        Page<Product> page = this.productRepository.findByTitleContaining(subTitle,pageable);
+        PageableResponse<ProductDto> response = PageableHelper.getPageableResponse(page, ProductDto.class);
+        log.info("Completed dao call for search the product by title with pagination");
+        return response;
     }
+
+
 }
