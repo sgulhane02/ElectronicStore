@@ -70,13 +70,18 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void deleteProduct(String productId) {
+        Product product = this.productRepository.findById(productId).orElseThrow(() -> new ResourceNotFound(AppConstant.NOT_FOUND + "id" + productId));
+        String imageName = product.getImageName();
+        String fullPath=path+imageName;
+        File file=new File(fullPath);
+        if(file.exists()){
+            file.delete();
+        }
+        this.productRepository.delete(product);
 
     }
 
-    @Override
-    public ProductDto getProductById(String productId) {
-        return null;
-    }
+
 
     @Override
     public PageableResponse<ProductDto> getAllProducts(Integer pageNum, Integer pageSize, String sortBy, String sortDir) {
