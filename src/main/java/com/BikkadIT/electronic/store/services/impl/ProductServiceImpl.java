@@ -100,7 +100,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public PageableResponse<ProductDto> getAllLive(Integer pageNum, Integer pageSize, String sortBy, String sortDir) {
-        return null;
+        Sort sort = sortDir.equalsIgnoreCase("dsc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        PageRequest pageable = PageRequest.of(pageNum, pageSize, sort);
+        log.info("Initiating dao call for get all live products with pagination");
+        Page<Product> page = this.productRepository.findByLiveTrue(pageable);
+        PageableResponse<ProductDto> response = PageableHelper.getPageableResponse(page, ProductDto.class);
+        log.info("Completed dao call for get all live products with pagination");
+        return response;
     }
 
     @Override
