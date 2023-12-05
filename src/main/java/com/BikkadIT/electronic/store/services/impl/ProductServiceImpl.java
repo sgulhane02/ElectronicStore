@@ -4,6 +4,7 @@ import com.BikkadIT.electronic.store.constants.AppConstant;
 import com.BikkadIT.electronic.store.dtos.ProductDto;
 import com.BikkadIT.electronic.store.entities.Product;
 import com.BikkadIT.electronic.store.exceptions.ResourceNotFound;
+import com.BikkadIT.electronic.store.helper.PageableHelper;
 import com.BikkadIT.electronic.store.payload.PageableResponse;
 import com.BikkadIT.electronic.store.repositories.ProductRepository;
 import com.BikkadIT.electronic.store.services.ProductService;
@@ -11,6 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -85,7 +89,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public PageableResponse<ProductDto> getAllProducts(Integer pageNum, Integer pageSize, String sortBy, String sortDir) {
-        return null;
+        Sort sort = sortDir.equalsIgnoreCase("dsc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        PageRequest pageable = PageRequest.of(pageNum, pageSize, sort);
+        log.info("Initiating dao call for get all products with pagination");
+        Page<Product> page = this.productRepository.findAll(pageable);
+        PageableResponse<ProductDto> response = PageableHelper.getPageableResponse(page, ProductDto.class);
+        log.info("Completed dao call for get all products with pagination");
+        return response;
     }
 
     @Override
