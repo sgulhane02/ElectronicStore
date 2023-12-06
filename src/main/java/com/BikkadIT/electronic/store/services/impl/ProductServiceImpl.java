@@ -40,9 +40,11 @@ public class ProductServiceImpl implements ProductService {
     public ProductDto createProduct(ProductDto productDto) {
         String productId = UUID.randomUUID().toString();
         productDto.setProductId(productId);
+        log.info("Initiating dao call for create product");
         Product product = this.modelMapper.map(productDto, Product.class);
         product.setAddedDate(new Date());
         Product save = this.productRepository.save(product);
+        log.info("Completed dao call for create product");
         return this.modelMapper.map(product,ProductDto.class);
 
     }
