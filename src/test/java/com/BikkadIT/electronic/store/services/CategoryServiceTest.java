@@ -94,4 +94,15 @@ public class CategoryServiceTest {
         PageableResponse<CategoryDto> allCategories = categoryService.getAllCategories(1, 2, "title", "asc");
         Assertions.assertEquals(3,allCategories.getContent().size());
     }
+    @Test
+    public void getCategoryById(){
+
+        String categoryId="udfgdfgd";
+        Mockito.when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(category));
+
+        CategoryDto categoryDto = categoryService.getCategoryById(categoryId);
+        Assertions.assertNotNull(categoryDto);
+        Assertions.assertEquals(category.getTitle(),categoryDto.getTitle(),"title not matched");
+
+    }
 }
