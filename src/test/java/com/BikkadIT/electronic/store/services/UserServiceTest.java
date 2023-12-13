@@ -38,8 +38,8 @@ public class UserServiceTest {
         @BeforeEach
         public void init(){
             user = User.builder()
-                    .name("John Doe")
-                    .email("john.doe@example.com")
+                    .name("John Warner")
+                    .email("john.warner@example.com")
                     .gender("male")
                     .about("Software Engineer")
                     .image("profile_pic.jpg")
@@ -54,7 +54,7 @@ public class UserServiceTest {
             UserDto user1 = userService.saveUser(modelMapper.map(user, UserDto.class));
             System.out.println(user1.getName());
             Assertions.assertNotNull(user1);
-            Assertions.assertEquals("Shrikant",user1.getName());
+            Assertions.assertEquals("John Warner",user1.getName());
 
         }
 
@@ -82,9 +82,9 @@ public class UserServiceTest {
         @Test
         public void deleteUserTest(){
 
-            String userId="userabcd";
+            String userId="Rahul";
 
-            Mockito.when(userRepository.findById("userabcd")).thenReturn(Optional.of(user));
+            Mockito.when(userRepository.findById("Rahul")).thenReturn(Optional.of(user));
             userService.deleteUser(userId);
 
         }
@@ -92,12 +92,12 @@ public class UserServiceTest {
         public void getAllUserTest(){
 
             User  user1 = User.builder()
-                    .name("Updated Name")
-                    .email("updated.email@example.com")
+                    .name("Ramesh Mahale")
+                    .email("ramesh.mahale@example.com")
                     .gender("other")
-                    .about("Updated Job Title")
+                    .about("Developer")
                     .image("updated_profile_pic.jpg")
-                    .password("updated_secure_password")
+                    .password("secure_password")
                     .build();
 
             User user2 = User.builder()
@@ -141,21 +141,21 @@ public class UserServiceTest {
         @Test
         public void searchUserTest(){
             User user = User.builder()
-                    .name("Ramesh")
-                    .email("rameshe@example.com")
+                    .name("Ramesh Patil")
+                    .email("ramesh.patil@example.com")
                     .gender("male")
                     .about("Senior Software Engineer")
                     .image("new_profile_pic.jpg")
-                    .password("new_and_secure_password")
+                    .password("secure_password")
                     .build();
 
             User user1 = User.builder()
-                    .name("Kevin")
-                    .email("kevine@example.com")
+                    .name("Abhijeet Dahake")
+                    .email("abhijeetdahake@example.com")
                     .gender("male")
                     .about("Senior Software Engineer")
                     .image("new_profile_pic.jpg")
-                    .password("new_and_secure_password")
+                    .password("secure_password")
                     .build();
 
             User user2 = User.builder()
@@ -167,10 +167,10 @@ public class UserServiceTest {
                     .password("new_and_secure_password")
                     .build();
 
-            String keyword="Kevin";
+            String keyword="Abhi";
             Mockito.when(userRepository.findByNameContaining(keyword)).thenReturn(Arrays.asList(user,user1,user2));
             List<UserDto> userDtos = userService.searchUser(keyword);
-            Assertions.assertEquals(4,userDtos.size(),"size not matched");
+            Assertions.assertEquals(3,userDtos.size(),"size not matched");
         }
 
     }
