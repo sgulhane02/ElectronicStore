@@ -105,4 +105,13 @@ public class CategoryServiceTest {
         Assertions.assertEquals(category.getTitle(),categoryDto.getTitle(),"title not matched");
 
     }
+    @Test
+    public void deleteCategoryTest(){
+
+        String categoryId="userabcd";
+
+        Mockito.when(categoryRepository.findById("userabcd")).thenReturn(Optional.of(category));
+        categoryService.deleteCategory(categoryId);
+
+    }
 }
