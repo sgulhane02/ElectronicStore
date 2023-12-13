@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.util.Optional;
+
 @SpringBootTest
 public class CategoryServiceTest {
 
@@ -45,5 +47,23 @@ public class CategoryServiceTest {
         Assertions.assertNotNull(category1);
         Assertions.assertEquals("Mobile phones",category1.getTitle());
 
+    }
+
+    @Test
+    public void updateCategoryTest(){
+        String categoryId="";
+
+        CategoryDto categoryDto=CategoryDto
+                .builder()
+                .title("Mobile phones")
+                .description("this is related to phones")
+                .coverImage("mob.png")
+                .build();
+
+        Mockito.when(categoryRepository.findById(Mockito.anyString())).thenReturn(Optional.of(category));
+        Mockito.when(categoryRepository.save(Mockito.any())).thenReturn(category);
+
+        CategoryDto updatedCategory = categoryService.updateCategory(categoryDto, categoryId);
+        Assertions.assertNotNull(categoryDto);
     }
 }
