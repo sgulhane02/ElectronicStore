@@ -7,7 +7,9 @@ import com.BikkadIT.electronic.store.repositories.UserRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
 
         @MockBean
@@ -43,7 +46,7 @@ public class UserServiceTest {
                     .gender("male")
                     .about("Software Engineer")
                     .image("profile_pic.jpg")
-                    .password("new_password")
+                    .password("password")
                     .build();
         }
 
@@ -167,7 +170,7 @@ public class UserServiceTest {
                     .password("new_and_secure_password")
                     .build();
 
-            String keyword="Abhi";
+            String keyword="Abhijeet";
             Mockito.when(userRepository.findByNameContaining(keyword)).thenReturn(Arrays.asList(user,user1,user2));
             List<UserDto> userDtos = userService.searchUser(keyword);
             Assertions.assertEquals(3,userDtos.size(),"size not matched");
